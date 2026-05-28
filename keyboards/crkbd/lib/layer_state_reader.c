@@ -1,38 +1,14 @@
-#include <stdio.h>
-#include "action_layer.h"
-
-// in the future, should use (1U<<_LAYER_NAME) instead, but needs to be moved to keymap,c
-#define L_BASE 0
-#define L_LOWER 2
-#define L_RAISE 4
-#define L_ADJUST 8
-#define L_ADJUST_TRI 14
-
-char layer_state_str[24];
+#include QMK_KEYBOARD_H
 
 const char *read_layer_state(void) {
-  switch (layer_state)
-  {
-  case L_BASE:
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Default");
-    break;
-  case L_RAISE:
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Raise");
-    break;
-  case L_LOWER:
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Lower");
-    break;
-  case L_ADJUST:
-  case L_ADJUST_TRI:
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Adjust");
-    break;
-  default:
-#if defined (LAYER_STATE_32BIT)
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Undef-%ld", layer_state);
-#else
-    snprintf(layer_state_str, sizeof(layer_state_str), "Layer: Undef-%d", layer_state);
-#endif
-  }
-
-  return layer_state_str;
+    switch (get_highest_layer(layer_state)) {
+        case 1:
+            return "Lower ";
+        case 2:
+            return "Raise ";
+        case 3:
+            return "Adjust";
+        default:
+            return "Base  ";
+    }
 }
