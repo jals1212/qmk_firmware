@@ -70,16 +70,28 @@ bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
-    if (!is_keyboard_master()) {
-        return OLED_ROTATION_180; // flips the display 180 degrees if offhand
-    }
-    return rotation;
+    return is_keyboard_master() ? OLED_ROTATION_270 : OLED_ROTATION_180;
 }
 
+// "JALS" pre-centered in 32 px (4 px padding + 4 glyphs * 6 bytes + 4 px
+// padding). Bytes taken from drivers/oled/glcdfont.c (chars J, A, L, S).
+static const char PROGMEM jals[32] = {
+    0x00, 0x00, 0x00, 0x00,
+    0x20, 0x40, 0x41, 0x3F, 0x01, 0x00, // J
+    0x7C, 0x12, 0x11, 0x12, 0x7C, 0x00, // A
+    0x7F, 0x40, 0x40, 0x40, 0x40, 0x00, // L
+    0x26, 0x49, 0x49, 0x49, 0x32, 0x00, // S
+    0x00, 0x00, 0x00, 0x00,
+};
+
 static void oled_render_status(void) {
-    oled_write_ln_P(PSTR("CRKBD"), false);
-    oled_write_P(PSTR("Layer: "), false);
-    oled_write_ln(read_layer_state(), false);
+    // Vertical OLED: 32 px wide, 16 lines tall.
+    // Layout: JALS (0) | blank (1-2) | big digit (3-8, 32x48) | blank | Caps (14) | state (15)
+    oled_set_cursor(0, 0);
+    oled_write_raw_P(jals, sizeof(jals));
+    oled_render_layer_state(3);
+    oled_set_cursor(0, 14);
+    oled_write_ln_P(PSTR("Caps"), false);
     oled_write_ln(read_host_led_state(), false);
 }
 
@@ -101,6 +113,10 @@ bool oled_task_kb(void) {
             oled_render_rgb_matrix_state();
         } else {
             oled_render_pet();
+            // WPM in the free top-left area of the bongocat frame.
+            oled_set_cursor(0, 0);
+            oled_write_P(PSTR("WPM "), false);
+            oled_write(get_u8_str(get_current_wpm(), ' '), false);
         }
     }
 

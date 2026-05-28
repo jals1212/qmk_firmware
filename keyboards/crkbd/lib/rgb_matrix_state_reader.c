@@ -11,10 +11,6 @@ static const char *read_rgb_matrix_mode(void) {
         case RGB_MATRIX_ALPHAS_MODS:
             return "Alpha";
 #    endif
-#    ifdef ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
-        case RGB_MATRIX_GRADIENT_LEFT_RIGHT:
-            return "Grad";
-#    endif
 #    ifdef ENABLE_RGB_MATRIX_BREATHING
         case RGB_MATRIX_BREATHING:
             return "Brth";
@@ -23,33 +19,13 @@ static const char *read_rgb_matrix_mode(void) {
         case RGB_MATRIX_CYCLE_LEFT_RIGHT:
             return "Cycle";
 #    endif
-#    ifdef ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
-        case RGB_MATRIX_CYCLE_OUT_IN_DUAL:
-            return "CycIO";
-#    endif
-#    ifdef ENABLE_RGB_MATRIX_HUE_BREATHING
-        case RGB_MATRIX_HUE_BREATHING:
-            return "HBrth";
-#    endif
 #    ifdef ENABLE_RGB_MATRIX_HUE_WAVE
         case RGB_MATRIX_HUE_WAVE:
             return "HWave";
 #    endif
-#    ifdef ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
-        case RGB_MATRIX_SOLID_REACTIVE_SIMPLE:
-            return "Reac1";
-#    endif
 #    ifdef ENABLE_RGB_MATRIX_SOLID_REACTIVE
         case RGB_MATRIX_SOLID_REACTIVE:
             return "React";
-#    endif
-#    ifdef ENABLE_RGB_MATRIX_SOLID_SPLASH
-        case RGB_MATRIX_SOLID_SPLASH:
-            return "Splsh";
-#    endif
-#    ifdef ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
-        case RGB_MATRIX_SOLID_MULTISPLASH:
-            return "MSpl";
 #    endif
         default:
             return "?";
@@ -57,6 +33,7 @@ static const char *read_rgb_matrix_mode(void) {
 }
 
 void oled_render_rgb_matrix_state(void) {
+    // Horizontal OLED: 21 chars per line, 4 lines tall.
     oled_write_P(PSTR("RGB Matrix: "), false);
     oled_write_ln_P(rgb_matrix_is_enabled() ? PSTR("ON") : PSTR("OFF"), false);
 
