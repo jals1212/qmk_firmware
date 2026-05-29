@@ -13,9 +13,9 @@ static const char *read_rgb_matrix_mode(void) {
         case RGB_MATRIX_ALPHAS_MODS:
             return "Alpha";
 #    endif
-#    ifdef ENABLE_RGB_MATRIX_SOLID_REACTIVE
-        case RGB_MATRIX_SOLID_REACTIVE:
-            return "React";
+#    ifdef ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
+        case RGB_MATRIX_CYCLE_UP_DOWN:
+            return "Rainb";
 #    endif
         default:
             return "?";
