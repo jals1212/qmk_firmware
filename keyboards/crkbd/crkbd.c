@@ -122,9 +122,31 @@ static void oled_render_status(void) {
 }
 
 bool oled_task_kb(void) {
-    if (oled_timeout_mins > 0 && last_matrix_activity_elapsed() > (uint32_t)oled_timeout_mins * 60000UL) {
+    static bool sleeping             = false;
+#ifdef RGB_MATRIX_ENABLE
+    static bool rgb_was_on           = false;
+#endif
+
+    bool timed_out = oled_timeout_mins > 0
+                  && last_matrix_activity_elapsed() > (uint32_t)oled_timeout_mins * 60000UL;
+
+    if (timed_out) {
+        if (!sleeping) {
+            sleeping = true;
+#ifdef RGB_MATRIX_ENABLE
+            rgb_was_on = rgb_matrix_is_enabled();
+            if (rgb_was_on) rgb_matrix_disable();
+#endif
+        }
         oled_off();
         return false;
+    }
+
+    if (sleeping) {
+        sleeping = false;
+#ifdef RGB_MATRIX_ENABLE
+        if (rgb_was_on) rgb_matrix_enable();
+#endif
     }
     oled_on();
 

@@ -104,15 +104,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
+static const uint8_t timeout_steps[] = {0, 1, 2, 5, 10, 20, 30, 60};
+#define TIMEOUT_STEPS (sizeof(timeout_steps) / sizeof(timeout_steps[0]))
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
-            case OLED_TUP:
-                if (oled_timeout_mins < 60) oled_timeout_mins++;
+            case OLED_TUP: {
+                uint8_t i = 0;
+                while (i < TIMEOUT_STEPS - 1 && timeout_steps[i] <= oled_timeout_mins) i++;
+                oled_timeout_mins = timeout_steps[i];
                 return false;
-            case OLED_TDN:
-                if (oled_timeout_mins > 0) oled_timeout_mins--;
+            }
+            case OLED_TDN: {
+                uint8_t i = TIMEOUT_STEPS - 1;
+                while (i > 0 && timeout_steps[i] >= oled_timeout_mins) i--;
+                oled_timeout_mins = timeout_steps[i];
                 return false;
+            }
         }
     }
     return true;
