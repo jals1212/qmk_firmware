@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "quantum.h"
+#include "transactions.h"
 
 #ifdef OLED_ENABLE
 #    include "lib/host_led_state_reader.h"
@@ -26,6 +27,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #        include "lib/oled_pet.h"
 #    endif
 #endif
+
+uint8_t oled_timeout_mins = 10;
+
+static void oled_timeout_sync_handler(uint8_t buflen, const void *data, uint8_t out_buflen, void *out_data) {
+    oled_timeout_mins = *(const uint8_t *)data;
+}
+
+void keyboard_post_init_kb(void) {
+    transaction_register_rpc(SYNC_OLED_TIMEOUT, oled_timeout_sync_handler);
+    keyboard_post_init_user();
+}
+
+void housekeeping_task_kb(void) {
+    if (is_keyboard_master()) {
+        static uint8_t last_sent = 255;
+        if (last_sent != oled_timeout_mins) {
+            if (transaction_rpc_send(SYNC_OLED_TIMEOUT, sizeof(oled_timeout_mins), &oled_timeout_mins)) {
+                last_sent = oled_timeout_mins;
+            }
+        }
+    }
+    housekeeping_task_user();
+}
 
 #ifdef SWAP_HANDS_ENABLE
 __attribute__((weak)) const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
@@ -98,6 +122,12 @@ static void oled_render_status(void) {
 }
 
 bool oled_task_kb(void) {
+    if (oled_timeout_mins > 0 && last_matrix_activity_elapsed() > (uint32_t)oled_timeout_mins * 60000UL) {
+        oled_off();
+        return false;
+    }
+    oled_on();
+
     if (!oled_task_user()) {
         return false;
     }

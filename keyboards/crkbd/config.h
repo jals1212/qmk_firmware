@@ -5,7 +5,8 @@
 #define SPLIT_OLED_ENABLE
 #define SPLIT_WPM_ENABLE
 
-#define OLED_TIMEOUT 600000
+#define OLED_TIMEOUT 0  // managed at runtime via oled_timeout_mins
+#define SPLIT_TRANSACTION_IDS_KB SYNC_OLED_TIMEOUT
 
 #ifdef RGB_MATRIX_ENABLE
 #    define RGB_MATRIX_SLEEP
