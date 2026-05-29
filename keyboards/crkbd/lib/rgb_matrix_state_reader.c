@@ -11,18 +11,6 @@ static const char *read_rgb_matrix_mode(void) {
         case RGB_MATRIX_ALPHAS_MODS:
             return "Alpha";
 #    endif
-#    ifdef ENABLE_RGB_MATRIX_BREATHING
-        case RGB_MATRIX_BREATHING:
-            return "Brth";
-#    endif
-#    ifdef ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
-        case RGB_MATRIX_CYCLE_LEFT_RIGHT:
-            return "Cycle";
-#    endif
-#    ifdef ENABLE_RGB_MATRIX_HUE_WAVE
-        case RGB_MATRIX_HUE_WAVE:
-            return "HWave";
-#    endif
 #    ifdef ENABLE_RGB_MATRIX_SOLID_REACTIVE
         case RGB_MATRIX_SOLID_REACTIVE:
             return "React";
