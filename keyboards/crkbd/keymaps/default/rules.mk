@@ -1,3 +1,4 @@
 TAP_DANCE_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 WPM_ENABLE = yes
+ENABLE_PET = yes

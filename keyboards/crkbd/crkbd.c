@@ -21,8 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef OLED_ENABLE
 #    include "lib/host_led_state_reader.h"
 #    include "lib/layer_state_reader.h"
-#    include "lib/oled_pet.h"
 #    include "lib/rgb_matrix_state_reader.h"
+#    ifdef ENABLE_PET
+#        include "lib/oled_pet.h"
+#    endif
 #endif
 
 #ifdef SWAP_HANDS_ENABLE
@@ -112,11 +114,12 @@ bool oled_task_kb(void) {
         if (current_layer == 3) {
             oled_render_rgb_matrix_state();
         } else {
+#ifdef ENABLE_PET
             oled_render_pet();
-            // WPM in the free top-left area of the bongocat frame.
             oled_set_cursor(0, 0);
             oled_write_P(PSTR("WPM "), false);
             oled_write(get_u8_str(get_current_wpm(), ' '), false);
+#endif
         }
     }
 
