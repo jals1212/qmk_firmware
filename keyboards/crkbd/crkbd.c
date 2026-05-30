@@ -135,7 +135,7 @@ bool oled_task_kb(void) {
             sleeping = true;
 #ifdef RGB_MATRIX_ENABLE
             rgb_was_on = rgb_matrix_is_enabled();
-            if (rgb_was_on) rgb_matrix_disable();
+            if (rgb_was_on) rgb_matrix_disable_noeeprom();
 #endif
         }
         oled_off();
@@ -145,7 +145,7 @@ bool oled_task_kb(void) {
     if (sleeping) {
         sleeping = false;
 #ifdef RGB_MATRIX_ENABLE
-        if (rgb_was_on) rgb_matrix_enable();
+        if (rgb_was_on) rgb_matrix_enable_noeeprom();
 #endif
     }
     oled_on();
